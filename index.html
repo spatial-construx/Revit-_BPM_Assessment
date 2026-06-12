@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Revit Content Distribution Assessment — Spatial Construx</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
@@ -16,7 +17,6 @@
     --cyan:       #00C2CB;
     --cyan-dim:   #007A82;
     --white:      #FFFFFF;
-    --off-white:  #F0F4FA;
     --text:       #E8EDF5;
     --text-muted: #7A91B0;
     --border:     rgba(255,255,255,0.09);
@@ -34,14 +34,10 @@
     --gap-low-tag:   rgba(0,194,203,0.18);
     --radius:    6px;
     --radius-lg: 10px;
+    --input-bg:  rgba(255,255,255,0.06);
   }
 
-  body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background: var(--navy);
-    color: var(--text);
-    min-height: 100vh;
-  }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--navy); color: var(--text); min-height: 100vh; }
 
   /* ── Header ── */
   .site-header {
@@ -56,331 +52,135 @@
     top: 0;
     z-index: 100;
   }
+  .logo-wrap img { height: 32px; display: block; }
+  .header-right { display: flex; align-items: center; gap: 1.5rem; }
+  .progress-track { width: 180px; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--cyan); border-radius: 2px; transition: width 0.35s ease; width: 0%; }
+  .progress-label { font-size: 12px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; white-space: nowrap; }
 
-  .logo-wrap img {
-    height: 32px;
-    display: block;
-  }
+  /* ── Hero ── */
+  .hero { background: var(--navy-mid); border-bottom: 1px solid var(--border); padding: 2.5rem 2rem; text-align: center; }
+  .hero .eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); font-family: 'IBM Plex Mono', monospace; margin-bottom: 12px; }
+  .hero h1 { font-size: 28px; font-weight: 600; line-height: 1.2; color: var(--white); margin-bottom: 12px; max-width: 560px; margin-left: auto; margin-right: auto; }
+  .hero p { font-size: 15px; line-height: 1.7; color: var(--text-muted); max-width: 520px; margin: 0 auto; }
 
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-  }
+  .page { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
 
-  .progress-track {
-    width: 180px;
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--cyan);
-    border-radius: 2px;
-    transition: width 0.35s ease;
-    width: 0%;
-  }
-  .progress-label {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-family: 'IBM Plex Mono', monospace;
-    white-space: nowrap;
-  }
-
-  /* ── Hero banner ── */
-  .hero {
-    background: var(--navy-mid);
-    border-bottom: 1px solid var(--border);
-    padding: 2.5rem 2rem;
-    text-align: center;
-  }
-  .hero .eyebrow {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--cyan);
-    font-family: 'IBM Plex Mono', monospace;
-    margin-bottom: 12px;
-  }
-  .hero h1 {
-    font-size: 28px;
-    font-weight: 600;
-    line-height: 1.2;
-    color: var(--white);
-    margin-bottom: 12px;
-    max-width: 560px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .hero p {
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--text-muted);
-    max-width: 520px;
-    margin: 0 auto;
-  }
-
-  /* ── Grid divider ── */
-  .page {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem 5rem;
-  }
-
-  /* ── Question card ── */
-  .q-card {
+  /* ── Contact card ── */
+  .contact-card {
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-strong);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
-    margin-bottom: 10px;
-    transition: border-color 0.2s;
+    margin-bottom: 1.75rem;
   }
-  .q-card.answered { border-color: var(--border-strong); }
-
-  .q-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  .q-num {
-    font-family: 'IBM Plex Mono', monospace;
+  .contact-card .card-title {
     font-size: 11px;
-    font-weight: 500;
-    color: var(--cyan);
-    background: rgba(0,194,203,0.1);
-    border: 1px solid rgba(0,194,203,0.25);
-    border-radius: 4px;
-    padding: 2px 8px;
-    flex-shrink: 0;
-  }
-  .q-topic {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.09em;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--cyan);
     font-family: 'IBM Plex Mono', monospace;
-  }
-
-  .q-text {
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1.55;
-    color: var(--white);
     margin-bottom: 14px;
   }
-
-  .q-options {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-  }
-
-  .q-opt {
-    display: flex;
-    align-items: flex-start;
-    gap: 11px;
-    padding: 10px 12px;
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 520px) { .field-row { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.04em; }
+  .field input {
+    background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+    padding: 10px 12px;
     font-size: 14px;
-    color: var(--text);
-    line-height: 1.45;
-    user-select: none;
-  }
-  .q-opt:hover { background: var(--surface-hover); border-color: rgba(255,255,255,0.18); }
-  .q-opt.selected {
-    background: rgba(0,194,203,0.1);
-    border-color: var(--cyan);
     color: var(--white);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
   }
-  .q-opt input[type="radio"] {
-    margin-top: 2px;
-    accent-color: var(--cyan);
-    flex-shrink: 0;
-    width: 15px;
-    height: 15px;
-  }
+  .field input::placeholder { color: var(--text-muted); }
+  .field input:focus { border-color: var(--cyan); }
+  .field input.error { border-color: #EF4444; }
+
+  /* ── Question card ── */
+  .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 10px; transition: border-color 0.2s; }
+  .q-card.answered { border-color: var(--border-strong); }
+  .q-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .q-num { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; color: var(--cyan); background: rgba(0,194,203,0.1); border: 1px solid rgba(0,194,203,0.25); border-radius: 4px; padding: 2px 8px; flex-shrink: 0; }
+  .q-topic { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
+  .q-text { font-size: 15px; font-weight: 500; line-height: 1.55; color: var(--white); margin-bottom: 14px; }
+  .q-options { display: flex; flex-direction: column; gap: 7px; }
+  .q-opt { display: flex; align-items: flex-start; gap: 11px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: background 0.15s, border-color 0.15s; font-size: 14px; color: var(--text); line-height: 1.45; user-select: none; }
+  .q-opt:hover { background: var(--surface-hover); border-color: rgba(255,255,255,0.18); }
+  .q-opt.selected { background: rgba(0,194,203,0.1); border-color: var(--cyan); color: var(--white); }
+  .q-opt input[type="radio"] { margin-top: 2px; accent-color: var(--cyan); flex-shrink: 0; width: 15px; height: 15px; }
 
   /* ── Submit ── */
-  .submit-area {
-    margin-top: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-  }
-  .btn-submit {
-    background: var(--cyan);
-    color: var(--navy);
-    border: none;
-    border-radius: var(--radius);
-    padding: 11px 26px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: inherit;
-    transition: background 0.15s, transform 0.1s;
-    letter-spacing: 0.01em;
-  }
+  .submit-area { margin-top: 2rem; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .btn-submit { background: var(--cyan); color: var(--navy); border: none; border-radius: var(--radius); padding: 11px 26px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s, transform 0.1s; letter-spacing: 0.01em; }
   .btn-submit:hover { background: #00DADA; }
   .btn-submit:active { transform: scale(0.98); }
+  .btn-submit:disabled { background: var(--navy-light); color: var(--text-muted); cursor: default; }
   .submit-note { font-size: 13px; color: var(--text-muted); }
   .submit-note.warn { color: #FCA5A5; }
+  .submit-note.ok { color: #67E8F0; }
+
+  /* ── Sending spinner ── */
+  .sending-state { display: none; align-items: center; gap: 10px; font-size: 14px; color: var(--text-muted); margin-top: 1rem; }
+  .sending-state.visible { display: flex; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--cyan); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   /* ── Summary ── */
   .summary { display: none; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border); }
   .summary.visible { display: block; }
-
-  .summary-eyebrow {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--cyan);
-    font-family: 'IBM Plex Mono', monospace;
-    margin-bottom: 10px;
-  }
-  .maturity-badge {
-    font-size: 30px;
-    font-weight: 600;
-    line-height: 1;
-    color: var(--white);
-  }
-  .score-label {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-family: 'IBM Plex Mono', monospace;
-    margin-top: 5px;
-    margin-bottom: 1.5rem;
-  }
-
-  .score-bar-track {
-    height: 5px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 4px;
-  }
-  .score-bar-fill {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.8s ease;
-  }
-  .score-bar-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--text-muted);
-    font-family: 'IBM Plex Mono', monospace;
-    margin-bottom: 1.5rem;
-  }
-
-  .gaps-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 1.5rem;
-  }
+  .summary-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); font-family: 'IBM Plex Mono', monospace; margin-bottom: 10px; }
+  .respondent-line { font-size: 13px; color: var(--text-muted); margin-bottom: 1rem; }
+  .respondent-line strong { color: var(--text); }
+  .maturity-badge { font-size: 30px; font-weight: 600; line-height: 1; color: var(--white); }
+  .score-label { font-size: 13px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; margin-top: 5px; margin-bottom: 1.5rem; }
+  .score-bar-track { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+  .score-bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+  .score-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: 1.5rem; }
+  .gaps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.5rem; }
   @media (max-width: 560px) { .gaps-grid { grid-template-columns: 1fr; } }
-
-  .gap-col {
-    padding: 1rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-  }
-  .gap-col-title {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.09em;
-    margin-bottom: 8px;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-  .gap-tag {
-    display: inline-block;
-    font-size: 12px;
-    padding: 3px 9px;
-    border-radius: 4px;
-    margin: 3px 2px 0 0;
-    font-weight: 500;
-  }
-  .gap-high-col { background: var(--gap-high-bg); }
-  .gap-high-col .gap-col-title { color: var(--gap-high-text); }
-  .gap-tag.high { background: var(--gap-high-tag); color: var(--gap-high-text); }
-  .gap-med-col  { background: var(--gap-med-bg); }
-  .gap-med-col  .gap-col-title { color: var(--gap-med-text); }
-  .gap-tag.med  { background: var(--gap-med-tag); color: var(--gap-med-text); }
-  .gap-low-col  { background: var(--gap-low-bg); }
-  .gap-low-col  .gap-col-title { color: var(--gap-low-text); }
-  .gap-tag.low  { background: var(--gap-low-tag); color: var(--gap-low-text); }
-  .none-label   { font-size: 13px; color: var(--text-muted); }
-
-  .action-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 1rem;
-  }
-  .print-btn {
-    background: transparent;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
-    padding: 9px 18px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--cyan);
-    cursor: pointer;
-    font-family: inherit;
-    transition: background 0.15s;
-  }
+  .gap-col { padding: 1rem; border-radius: var(--radius); border: 1px solid var(--border); }
+  .gap-col-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
+  .gap-tag { display: inline-block; font-size: 12px; padding: 3px 9px; border-radius: 4px; margin: 3px 2px 0 0; font-weight: 500; }
+  .gap-high-col { background: var(--gap-high-bg); } .gap-high-col .gap-col-title { color: var(--gap-high-text); } .gap-tag.high { background: var(--gap-high-tag); color: var(--gap-high-text); }
+  .gap-med-col  { background: var(--gap-med-bg); }  .gap-med-col  .gap-col-title { color: var(--gap-med-text); } .gap-tag.med  { background: var(--gap-med-tag);  color: var(--gap-med-text); }
+  .gap-low-col  { background: var(--gap-low-bg); }  .gap-low-col  .gap-col-title { color: var(--gap-low-text); } .gap-tag.low  { background: var(--gap-low-tag);  color: var(--gap-low-text); }
+  .none-label { font-size: 13px; color: var(--text-muted); }
+  .email-confirm { background: rgba(0,194,203,0.08); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--cyan); margin-bottom: 1.25rem; }
+  .email-confirm span { color: var(--text-muted); }
+  .action-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 1rem; }
+  .print-btn { background: transparent; border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 9px 18px; font-size: 13px; font-weight: 500; color: var(--cyan); cursor: pointer; font-family: inherit; transition: background 0.15s; }
   .print-btn:hover { background: rgba(0,194,203,0.08); }
-  .reset-btn {
-    background: transparent;
-    border: none;
-    font-size: 13px;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-family: inherit;
-    padding: 9px 0;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
+  .reset-btn { background: transparent; border: none; font-size: 13px; color: var(--text-muted); cursor: pointer; font-family: inherit; padding: 9px 0; text-decoration: underline; text-underline-offset: 3px; }
   .reset-btn:hover { color: var(--text); }
 
   /* ── Footer ── */
-  .site-footer {
-    background: var(--navy-mid);
-    border-top: 1px solid var(--border);
-    padding: 1.5rem 2rem;
-    text-align: center;
-  }
+  .site-footer { background: var(--navy-mid); border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; }
   .site-footer img { height: 22px; opacity: 0.5; margin-bottom: 8px; }
-  .site-footer p {
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
+  .site-footer p { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
   .site-footer a { color: var(--cyan); text-decoration: none; }
   .site-footer a:hover { text-decoration: underline; }
+
+  /* ── EmailJS setup notice ── */
+  .setup-banner { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; color: #FCD34D; margin-bottom: 1.5rem; line-height: 1.6; }
+  .setup-banner strong { color: #FDE68A; }
+  .setup-banner.hidden { display: none; }
 
   @media print {
     body { background: #fff; color: #111; }
     .site-header { position: static; background: #fff; border-color: #ddd; }
     .hero { background: #f5f5f5; }
-    .q-card { background: #fff; border-color: #ccc; }
+    .q-card, .contact-card { background: #fff; border-color: #ccc; }
     .q-opt { border-color: #ccc; color: #111; }
     .q-opt.selected { background: #e8f4f5; border-color: #009ca3; color: #00636b; }
-    .btn-submit, .print-btn, .reset-btn, .progress-track { display: none; }
+    .btn-submit, .print-btn, .reset-btn, .progress-track, .setup-banner { display: none !important; }
     .site-footer { background: #f5f5f5; }
+    .field input { background: #fff; color: #111; border-color: #ccc; }
   }
 
   @media (max-width: 600px) {
@@ -414,11 +214,38 @@
 </div>
 
 <main class="page">
+
+  <!-- ⚠️ Setup banner — remove once EmailJS is configured -->
+  <div class="setup-banner" id="setup-banner">
+    <strong>Setup required:</strong> To enable email delivery, replace the three placeholder values at the top of the &lt;script&gt; block:
+    <code>EMAILJS_PUBLIC_KEY</code>, <code>EMAILJS_SERVICE_ID</code>, and <code>EMAILJS_TEMPLATE_ID</code>.
+    See the setup instructions that came with this file.
+  </div>
+
+  <!-- Contact details -->
+  <div class="contact-card">
+    <div class="card-title">Your details</div>
+    <div class="field-row">
+      <div class="field">
+        <label for="respondent-name">Full name <span style="color:#EF4444">*</span></label>
+        <input type="text" id="respondent-name" placeholder="Jane Smith" autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="respondent-email">Email address <span style="color:#EF4444">*</span></label>
+        <input type="email" id="respondent-email" placeholder="jane@company.com" autocomplete="email">
+      </div>
+    </div>
+  </div>
+
   <div id="questions"></div>
 
   <div class="submit-area">
-    <button class="btn-submit" id="submit-btn" onclick="submitQuestionnaire()">View gap analysis</button>
-    <span class="submit-note" id="submit-note">Answer all 10 questions to continue</span>
+    <button class="btn-submit" id="submit-btn" onclick="submitQuestionnaire()">Generate gap report</button>
+    <span class="submit-note" id="submit-note">Complete your details and all 10 questions to continue</span>
+  </div>
+  <div class="sending-state" id="sending-state">
+    <div class="spinner"></div>
+    <span>Sending results to Spatial Construx&hellip;</span>
   </div>
 
   <div class="summary" id="summary"></div>
@@ -436,192 +263,251 @@
 </footer>
 
 <script>
-const questions = [
-  {
-    id: 1,
-    topic: "Content availability",
-    text: "What percentage of your product catalog currently has a corresponding Revit family available for download?",
-    options: ["Less than 25% of our catalog", "25–50% of our catalog", "51–80% of our catalog", "Over 80% of our catalog"]
-  },
-  {
-    id: 2,
-    topic: "Distribution channels",
-    text: "Where do you currently distribute your Revit families to customers?",
-    options: ["Only on our company website", "Our website plus one third-party BIM platform", "Multiple BIM platforms (e.g. BIMobject, ARCAT, Autodesk Seek)", "We don't have a defined distribution channel"]
-  },
-  {
-    id: 3,
-    topic: "Content discoverability",
-    text: "How easily can a specifier or designer find your Revit content directly from within Revit or a BIM workflow tool?",
-    options: ["Not at all — they must leave Revit entirely", "Only via browser download and manual import", "Via a third-party plugin or library connector", "Natively through an integrated content delivery solution"]
-  },
-  {
-    id: 4,
-    topic: "Content quality & LOD",
-    text: "Do your Revit families include accurate Level of Development (LOD) metadata, shared parameters, and correct geometry for at least LOD 300?",
-    options: ["No — families are basic geometry only", "Partial — some products meet LOD 300", "Most families meet LOD 300 with some parameters", "Yes — full LOD 300+ with complete shared parameters"]
-  },
-  {
-    id: 5,
-    topic: "Content maintenance",
-    text: "How often do you update Revit families when product specifications, dimensions, or finishes change?",
-    options: ["Rarely or never", "Only when a customer reports an issue", "Annually or on a product release cycle", "Continuously — updates are part of our product release process"]
-  },
-  {
-    id: 6,
-    topic: "Customer awareness",
-    text: "Do your sales and customer success teams actively inform customers that Revit content is available for your products?",
-    options: ["No — it is not part of our sales motion", "Sometimes — only if a customer asks", "Yes — it is mentioned in marketing materials", "Yes — it is a core part of our product specification pitch"]
-  },
-  {
-    id: 7,
-    topic: "Analytics & usage data",
-    text: "Can you currently track how many times your Revit families are downloaded, used in projects, or specified by design firms?",
-    options: ["No tracking at all", "Only total download counts", "Downloads plus basic geographic or firm data", "Full analytics including project specifications and design intent data"]
-  },
-  {
-    id: 8,
-    topic: "Specifier engagement",
-    text: "Do you have a program or workflow to convert Revit family downloads into active product specifications or sales leads?",
-    options: ["No — downloads are disconnected from our sales process", "We occasionally follow up on download inquiries", "We have a basic nurture email sequence for content downloads", "Yes — downloads feed directly into a qualified lead workflow"]
-  },
-  {
-    id: 9,
-    topic: "Competitive positioning",
-    text: "How does your Revit content offering compare to direct competitors in the eyes of AEC specifiers?",
-    options: ["We are behind — competitors have more and better content", "Roughly equivalent — similar coverage", "Slightly ahead in some product lines", "We are a recognized leader in BIM content quality in our category"]
-  },
-  {
-    id: 10,
-    topic: "Strategic priority",
-    text: "How does your leadership team currently view BIM content distribution as a business priority?",
-    options: ["Not a priority — no budget or owner assigned", "A low-level marketing task, not a strategic one", "Growing priority — being evaluated for investment", "A core pillar of our go-to-market and specification strategy"]
+  // ─────────────────────────────────────────────
+  // EMAILJS CONFIGURATION
+  // Replace these three values after setting up EmailJS.
+  // Full instructions below the script block.
+  // ─────────────────────────────────────────────
+  const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // From EmailJS → Account → API Keys
+  const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // From EmailJS → Email Services
+  const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // From EmailJS → Email Templates
+  // ─────────────────────────────────────────────
+
+  const CONFIGURED = !EMAILJS_PUBLIC_KEY.startsWith('YOUR');
+  if (CONFIGURED) {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    document.getElementById('setup-banner').classList.add('hidden');
   }
-];
 
-const answers = {};
+  const questions = [
+    { id:1,  topic:"Content availability",    text:"What percentage of your product catalog currently has a corresponding Revit family available for download?",                                              options:["Less than 25% of our catalog","25–50% of our catalog","51–80% of our catalog","Over 80% of our catalog"] },
+    { id:2,  topic:"Distribution channels",   text:"Where do you currently distribute your Revit families to customers?",                                                                                    options:["Only on our company website","Our website plus one third-party BIM platform","Multiple BIM platforms (e.g. BIMobject, ARCAT, Autodesk Seek)","We don't have a defined distribution channel"] },
+    { id:3,  topic:"Content discoverability", text:"How easily can a specifier or designer find your Revit content directly from within Revit or a BIM workflow tool?",                                      options:["Not at all — they must leave Revit entirely","Only via browser download and manual import","Via a third-party plugin or library connector","Natively through an integrated content delivery solution"] },
+    { id:4,  topic:"Content quality & LOD",   text:"Do your Revit families include accurate Level of Development (LOD) metadata, shared parameters, and correct geometry for at least LOD 300?",             options:["No — families are basic geometry only","Partial — some products meet LOD 300","Most families meet LOD 300 with some parameters","Yes — full LOD 300+ with complete shared parameters"] },
+    { id:5,  topic:"Content maintenance",     text:"How often do you update Revit families when product specifications, dimensions, or finishes change?",                                                     options:["Rarely or never","Only when a customer reports an issue","Annually or on a product release cycle","Continuously — updates are part of our product release process"] },
+    { id:6,  topic:"Customer awareness",      text:"Do your sales and customer success teams actively inform customers that Revit content is available for your products?",                                   options:["No — it is not part of our sales motion","Sometimes — only if a customer asks","Yes — it is mentioned in marketing materials","Yes — it is a core part of our product specification pitch"] },
+    { id:7,  topic:"Analytics & usage data",  text:"Can you currently track how many times your Revit families are downloaded, used in projects, or specified by design firms?",                             options:["No tracking at all","Only total download counts","Downloads plus basic geographic or firm data","Full analytics including project specifications and design intent data"] },
+    { id:8,  topic:"Specifier engagement",    text:"Do you have a program or workflow to convert Revit family downloads into active product specifications or sales leads?",                                  options:["No — downloads are disconnected from our sales process","We occasionally follow up on download inquiries","We have a basic nurture email sequence for content downloads","Yes — downloads feed directly into a qualified lead workflow"] },
+    { id:9,  topic:"Competitive positioning", text:"How does your Revit content offering compare to direct competitors in the eyes of AEC specifiers?",                                                      options:["We are behind — competitors have more and better content","Roughly equivalent — similar coverage","Slightly ahead in some product lines","We are a recognized leader in BIM content quality in our category"] },
+    { id:10, topic:"Strategic priority",      text:"How does your leadership team currently view BIM content distribution as a business priority?",                                                          options:["Not a priority — no budget or owner assigned","A low-level marketing task, not a strategic one","Growing priority — being evaluated for investment","A core pillar of our go-to-market and specification strategy"] }
+  ];
 
-function render() {
-  const container = document.getElementById('questions');
-  container.innerHTML = '';
-  questions.forEach(q => {
-    const card = document.createElement('div');
-    card.className = 'q-card';
-    card.id = 'card-' + q.id;
-    card.innerHTML = `
-      <div class="q-meta">
-        <span class="q-num">Q${String(q.id).padStart(2,'0')}</span>
-        <span class="q-topic">${q.topic}</span>
+  const answers = {};
+
+  function render() {
+    const container = document.getElementById('questions');
+    container.innerHTML = '';
+    questions.forEach(q => {
+      const card = document.createElement('div');
+      card.className = 'q-card';
+      card.id = 'card-' + q.id;
+      card.innerHTML = `
+        <div class="q-meta">
+          <span class="q-num">Q${String(q.id).padStart(2,'0')}</span>
+          <span class="q-topic">${q.topic}</span>
+        </div>
+        <div class="q-text">${q.text}</div>
+        <div class="q-options">
+          ${q.options.map((opt,i) => `
+            <label class="q-opt" id="opt-${q.id}-${i}">
+              <input type="radio" name="q${q.id}" value="${i}" onchange="selectOption(${q.id},${i})">
+              ${opt}
+            </label>
+          `).join('')}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function selectOption(qid, idx) {
+    answers[qid] = idx;
+    document.querySelectorAll(`#card-${qid} .q-opt`).forEach((el,i) => el.classList.toggle('selected', i===idx));
+    document.getElementById('card-'+qid).classList.add('answered');
+    const answered = Object.keys(answers).length;
+    document.getElementById('prog').style.width = Math.round((answered/10)*100)+'%';
+    document.getElementById('prog-label').textContent = answered+' / 10';
+    updateNote();
+  }
+
+  function updateNote() {
+    const name    = document.getElementById('respondent-name').value.trim();
+    const email   = document.getElementById('respondent-email').value.trim();
+    const answered = Object.keys(answers).length;
+    const note = document.getElementById('submit-note');
+    note.className = 'submit-note';
+    if (!name || !email) { note.textContent = 'Enter your name and email to continue'; return; }
+    const rem = 10 - answered;
+    note.textContent = rem===0 ? 'Ready — click to generate your gap report.' : rem+' question'+(rem>1?'s':'')+' remaining';
+    if (rem===0) note.className = 'submit-note ok';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('respondent-name').addEventListener('input', updateNote);
+    document.getElementById('respondent-email').addEventListener('input', updateNote);
+  });
+
+  function submitQuestionnaire() {
+    const nameEl  = document.getElementById('respondent-name');
+    const emailEl = document.getElementById('respondent-email');
+    const name    = nameEl.value.trim();
+    const email   = emailEl.value.trim();
+    const note    = document.getElementById('submit-note');
+
+    // Validate contact fields
+    let valid = true;
+    if (!name)  { nameEl.classList.add('error');  valid=false; } else nameEl.classList.remove('error');
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { emailEl.classList.add('error'); valid=false; } else emailEl.classList.remove('error');
+    if (!valid) { note.textContent='Please enter a valid name and email address.'; note.className='submit-note warn'; return; }
+
+    // Validate questions
+    if (Object.keys(answers).length < 10) {
+      note.textContent='Please answer all 10 questions before continuing.';
+      note.className='submit-note warn';
+      const first = questions.find(q => answers[q.id]===undefined);
+      if (first) document.getElementById('card-'+first.id).scrollIntoView({behavior:'smooth',block:'center'});
+      return;
+    }
+
+    // Build results
+    const topicScores = questions.map(q => ({ topic:q.topic, score:answers[q.id]??0, answer:q.options[answers[q.id]] }));
+    const total = topicScores.reduce((s,t)=>s+t.score,0);
+    const pct   = Math.round((total/30)*100);
+    let maturity, barColor;
+    if      (pct<30) { maturity='Early stage'; barColor='#EF4444'; }
+    else if (pct<55) { maturity='Developing';  barColor='#F59E0B'; }
+    else if (pct<78) { maturity='Capable';     barColor='#00C2CB'; }
+    else             { maturity='Leading';      barColor='#22C55E'; }
+
+    const critAll = topicScores.filter(t=>t.score<=1).map(t=>t.topic);
+    const mod     = topicScores.filter(t=>t.score===2).map(t=>t.topic);
+    const strong  = topicScores.filter(t=>t.score===3).map(t=>t.topic);
+
+    // Build plain-text answer summary for the email
+    const answerLines = questions.map(q =>
+      `Q${String(q.id).padStart(2,'0')} — ${q.topic}\n    ${q.options[answers[q.id]]}`
+    ).join('\n\n');
+
+    const emailBody = `
+SPATIAL CONSTRUX — REVIT CONTENT DISTRIBUTION ASSESSMENT
+=========================================================
+
+Submitted by : ${name}
+Email        : ${email}
+Date         : ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}
+
+MATURITY SCORE: ${maturity} (${pct}% — ${total}/30 pts)
+
+CRITICAL GAPS  : ${critAll.length ? critAll.join(', ') : 'None'}
+MODERATE GAPS  : ${mod.length     ? mod.join(', ')     : 'None'}
+STRENGTHS      : ${strong.length  ? strong.join(', ')  : 'None'}
+
+─────────────────────────────────────
+FULL RESPONSES
+─────────────────────────────────────
+${answerLines}
+    `.trim();
+
+    // Send email (or show results without email if not configured)
+    if (CONFIGURED) {
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      document.getElementById('sending-state').classList.add('visible');
+
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        respondent_name:   name,
+        respondent_email:  email,
+        maturity_label:    maturity,
+        maturity_score:    `${pct}% (${total}/30)`,
+        critical_gaps:     critAll.length ? critAll.join(', ') : 'None',
+        moderate_gaps:     mod.length     ? mod.join(', ')     : 'None',
+        strengths:         strong.length  ? strong.join(', ')  : 'None',
+        full_responses:    emailBody,
+        to_email:          'judah.jackson@spatialconstrux.com',
+        submission_date:   new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})
+      }).then(() => {
+        document.getElementById('sending-state').classList.remove('visible');
+        showSummary(name, email, topicScores, total, pct, maturity, barColor, critAll, mod, strong, true);
+      }).catch(err => {
+        console.error('EmailJS error:', err);
+        document.getElementById('sending-state').classList.remove('visible');
+        btn.disabled = false;
+        note.textContent = 'Email delivery failed — showing your results below. Please screenshot and share manually.';
+        note.className = 'submit-note warn';
+        showSummary(name, email, topicScores, total, pct, maturity, barColor, critAll, mod, strong, false);
+      });
+    } else {
+      showSummary(name, email, topicScores, total, pct, maturity, barColor, critAll, mod, strong, false);
+    }
+  }
+
+  function showSummary(name, email, topicScores, total, pct, maturity, barColor, critAll, mod, strong, emailSent) {
+    const tagHTML = (items, cls) => items.length
+      ? items.map(t=>`<span class="gap-tag ${cls}">${t}</span>`).join('')
+      : `<span class="none-label">None</span>`;
+
+    const emailNote = emailSent
+      ? `<div class="email-confirm">&#10003; Results sent to <strong>judah.jackson@spatialconstrux.com</strong> <span>— a copy has been recorded for follow-up.</span></div>`
+      : CONFIGURED
+        ? `<div class="email-confirm" style="border-color:rgba(239,68,68,0.4);color:#FCA5A5;">&#9888; Email could not be delivered. Please screenshot this report and send manually.</div>`
+        : `<div class="email-confirm" style="border-color:rgba(245,158,11,0.4);color:#FCD34D;">&#9888; EmailJS not yet configured — results shown below but not emailed.</div>`;
+
+    const summary = document.getElementById('summary');
+    summary.innerHTML = `
+      <div class="summary-eyebrow">Gap analysis results</div>
+      <div class="respondent-line">Submitted by <strong>${name}</strong> &mdash; ${email}</div>
+      ${emailNote}
+      <div class="maturity-badge">${maturity}</div>
+      <div class="score-label">${pct}% maturity score &mdash; ${total} / 30 points</div>
+      <div class="score-bar-track">
+        <div class="score-bar-fill" style="width:${pct}%;background:${barColor};"></div>
       </div>
-      <div class="q-text">${q.text}</div>
-      <div class="q-options">
-        ${q.options.map((opt, i) => `
-          <label class="q-opt" id="opt-${q.id}-${i}">
-            <input type="radio" name="q${q.id}" value="${i}" onchange="selectOption(${q.id}, ${i})">
-            ${opt}
-          </label>
-        `).join('')}
+      <div class="score-bar-labels"><span>Early stage</span><span>Leading</span></div>
+      <div class="gaps-grid">
+        <div class="gap-col gap-high-col">
+          <div class="gap-col-title">Critical gaps</div>
+          ${tagHTML(critAll,'high')}
+        </div>
+        <div class="gap-col gap-med-col">
+          <div class="gap-col-title">Moderate gaps</div>
+          ${tagHTML(mod,'med')}
+        </div>
+        <div class="gap-col gap-low-col">
+          <div class="gap-col-title">Strengths</div>
+          ${tagHTML(strong,'low')}
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+        <button class="reset-btn" onclick="resetForm()">Start over</button>
       </div>
     `;
-    container.appendChild(card);
-  });
-}
-
-function selectOption(qid, idx) {
-  answers[qid] = idx;
-  document.querySelectorAll(`#card-${qid} .q-opt`).forEach((el, i) => {
-    el.classList.toggle('selected', i === idx);
-  });
-  document.getElementById('card-' + qid).classList.add('answered');
-  const answered = Object.keys(answers).length;
-  document.getElementById('prog').style.width = Math.round((answered / 10) * 100) + '%';
-  document.getElementById('prog-label').textContent = answered + ' / 10';
-  const note = document.getElementById('submit-note');
-  const remaining = 10 - answered;
-  note.className = 'submit-note';
-  note.textContent = remaining === 0 ? 'Ready — all questions answered.' : remaining + ' question' + (remaining > 1 ? 's' : '') + ' remaining';
-}
-
-function submitQuestionnaire() {
-  const answered = Object.keys(answers).length;
-  if (answered < 10) {
-    const note = document.getElementById('submit-note');
-    note.textContent = 'Please answer all 10 questions before continuing.';
-    note.className = 'submit-note warn';
-    const first = questions.find(q => answers[q.id] === undefined);
-    if (first) document.getElementById('card-' + first.id).scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
+    summary.classList.add('visible');
+    summary.scrollIntoView({behavior:'smooth',block:'start'});
   }
-  showSummary();
-}
 
-function showSummary() {
-  const topicScores = questions.map(q => ({ topic: q.topic, score: answers[q.id] ?? 0 }));
-  const total = topicScores.reduce((s, t) => s + t.score, 0);
-  const pct = Math.round((total / 30) * 100);
+  function resetForm() {
+    Object.keys(answers).forEach(k=>delete answers[k]);
+    document.getElementById('prog').style.width='0%';
+    document.getElementById('prog-label').textContent='0 / 10';
+    document.getElementById('submit-note').textContent='Complete your details and all 10 questions to continue';
+    document.getElementById('submit-note').className='submit-note';
+    document.getElementById('submit-btn').disabled=false;
+    document.getElementById('summary').classList.remove('visible');
+    document.getElementById('summary').innerHTML='';
+    document.getElementById('respondent-name').value='';
+    document.getElementById('respondent-email').value='';
+    document.getElementById('respondent-name').classList.remove('error');
+    document.getElementById('respondent-email').classList.remove('error');
+    render();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
 
-  let maturity, barColor;
-  if      (pct < 30) { maturity = 'Early stage'; barColor = '#EF4444'; }
-  else if (pct < 55) { maturity = 'Developing';  barColor = '#F59E0B'; }
-  else if (pct < 78) { maturity = 'Capable';     barColor = '#00C2CB'; }
-  else               { maturity = 'Leading';      barColor = '#22C55E'; }
-
-  const critAll = topicScores.filter(t => t.score <= 1).map(t => t.topic);
-  const mod     = topicScores.filter(t => t.score === 2).map(t => t.topic);
-  const strong  = topicScores.filter(t => t.score === 3).map(t => t.topic);
-
-  const tagHTML = (items, cls) => items.length
-    ? items.map(t => `<span class="gap-tag ${cls}">${t}</span>`).join('')
-    : `<span class="none-label">None</span>`;
-
-  const summary = document.getElementById('summary');
-  summary.innerHTML = `
-    <div class="summary-eyebrow">Gap analysis results</div>
-    <div class="maturity-badge">${maturity}</div>
-    <div class="score-label">${pct}% maturity score &mdash; ${total} / 30 points</div>
-
-    <div class="score-bar-track">
-      <div class="score-bar-fill" style="width:${pct}%;background:${barColor};"></div>
-    </div>
-    <div class="score-bar-labels"><span>Early stage</span><span>Leading</span></div>
-
-    <div class="gaps-grid">
-      <div class="gap-col gap-high-col">
-        <div class="gap-col-title">Critical gaps</div>
-        ${tagHTML(critAll, 'high')}
-      </div>
-      <div class="gap-col gap-med-col">
-        <div class="gap-col-title">Moderate gaps</div>
-        ${tagHTML(mod, 'med')}
-      </div>
-      <div class="gap-col gap-low-col">
-        <div class="gap-col-title">Strengths</div>
-        ${tagHTML(strong, 'low')}
-      </div>
-    </div>
-
-    <div class="action-row">
-      <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
-      <button class="reset-btn" onclick="resetForm()">Start over</button>
-    </div>
-  `;
-  summary.classList.add('visible');
-  summary.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-function resetForm() {
-  Object.keys(answers).forEach(k => delete answers[k]);
-  document.getElementById('prog').style.width = '0%';
-  document.getElementById('prog-label').textContent = '0 / 10';
-  document.getElementById('submit-note').textContent = 'Answer all 10 questions to continue';
-  document.getElementById('submit-note').className = 'submit-note';
-  document.getElementById('summary').classList.remove('visible');
-  document.getElementById('summary').innerHTML = '';
   render();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-render();
 </script>
 </body>
 </html>
+const EMAILJS_PUBLIC_KEY  = 'i5dF6UBN9Rr_vlDwe';
+const EMAILJS_SERVICE_ID  = 'service_nkjojxk';
+const EMAILJS_TEMPLATE_ID = 'template_o6mpuvf';
+
